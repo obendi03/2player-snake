@@ -1,0 +1,71 @@
+package NHF;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * A Kígyó játék Tábla osztálya.
+ * Kezeli a játékosok információit és az akadályokat a táblán.
+ */
+public class GameBoard implements Serializable {
+	private  final int WIDTH = 600;
+	private  final int HEIGHT = 600;
+	private  final int UNIT_SIZE = 20;
+	private  final int NUMBER_OF_UNITS = (WIDTH * HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
+	private List<SnakePlayer> players = new  ArrayList<>();
+	private List<Obstacle> obstacles;
+	
+	/**
+     * Beállítja az akadályokat a játéktáblán.
+     *
+     * @param akadályok Az akadályok listája.
+     */
+	public void setObstacles(List<Obstacle> obstacles) {
+		this.obstacles = new ArrayList<>();
+		this.obstacles.addAll(obstacles);
+	}
+	
+	 /**
+     * Hozzáad egy játékost a játéktáblához.
+     *
+     * @param player A hozzáadandó SnakePlayer objektum.
+     */
+	public void setPlayer(SnakePlayer player) {
+		players.add(player);
+	}
+	public SnakePlayer getPlayer(int i) {
+		if(i>=0 && i<players.size()) {
+			 return players.get(i);
+		}
+		return null;
+	}
+	public void removePlayer(int i) {
+		if(i>=0 && i<players.size()) {
+		 players.remove(i);
+		}
+	}
+	
+	public List<SnakePlayer> getPlayers() {
+		return players;
+	}
+	public List<Obstacle> getObstacles() {
+		return obstacles;
+	}
+	
+	public void setObstaclesSize(int size) {
+		obstacles = new ArrayList<>(size);
+	}
+	
+	public int getWidth() {
+		return this.WIDTH;
+	}
+	public int getHeight() {
+		return this.HEIGHT;
+	}
+	public int getUnitSize() {
+		return this.UNIT_SIZE;
+	}
+	public int getNumberOfUnits() {
+		return this.NUMBER_OF_UNITS;
+	}
+}

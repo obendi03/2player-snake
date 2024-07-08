@@ -1,0 +1,113 @@
+package NHF;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * A Kígyó játék Tábla osztálya.
+ * Kezeli a játékosok információit és az akadályokat a táblán.
+ */
+public class GameBoard implements Serializable {
+	private  final int WIDTH = 600;
+	private  final int HEIGHT = 600;
+	private  final int UNIT_SIZE = 20;
+	private  final int NUMBER_OF_UNITS = (WIDTH * HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
+	private List<SnakePlayer> players = new  ArrayList<>();
+	private List<Obstacle> obstacles;
+	
+	/**
+     * Beállítja az akadályokat a játéktáblán.
+     *
+     * @param obstacles Az akadályok listája.
+     */
+	public void setObstacles(List<Obstacle> obstacles) {
+		this.obstacles = new ArrayList<>();
+		this.obstacles.addAll(obstacles);
+	}
+	
+	 /**
+     * Hozzáad egy játékost a játéktáblához.
+     *
+     * @param player A hozzáadandó SnakePlayer objektum.
+     */
+	public void setPlayer(SnakePlayer player) {
+		players.add(player);
+	}
+	
+	   /**
+     * Lekéri a megadott indexű játékost.
+     *
+     * @param i A lekérni kívánt játékos indexe.
+     * @return A SnakePlayer objektum a megadott indexen, vagy null, ha nem található a játékos.
+     */
+	public SnakePlayer getPlayer(int i) {
+		if(i>=0 && i<players.size()) {
+			 return players.get(i);
+		}
+		return null;
+	}
+	
+    /**
+     * Eltávolítja a megadott indexű játékost a játéktábláról.
+     *
+     * @param i Az eltávolítandó játékos indexe.
+     */
+	public void removePlayer(int i) {
+		if(i>=0 && i<players.size()) {
+		 players.remove(i);
+		}
+	}
+	
+	   /**
+     * Lekéri a játékosok listáját a játéktábláról.
+     *
+     * @return A pályán tartózkodó  SnakePlayer objektumok listája.
+     */
+	public List<SnakePlayer> getPlayers() {
+		return players;
+	}
+	
+    /**
+     * Lekéri az akadályok listáját a játéktáblán.
+     *
+     * @return Az akadályokat reprezentáló Obstacle objektumok listája.
+     */
+	public List<Obstacle> getObstacles() {
+		return obstacles;
+	}
+	
+	
+	   /**
+     * Beállítja az akadályok listájának méretét.
+     *
+     * @param size Az akadályok listájának beállítandó mérete.
+     */
+	public void setObstaclesSize(int size) {
+		obstacles = new ArrayList<>(size);
+	}
+	
+	
+    /**
+     * Lekéri a játéktábla szélességét.
+     *
+     * @return A játéktábla szélessége.
+     */
+	public int getWidth() {
+		return this.WIDTH;
+	}
+	
+	 /**
+     * Lekéri a játéktábla magasságát.
+     *
+     * @return A játéktábla magassága.
+     */
+	public int getHeight() {
+		return this.HEIGHT;
+	}
+	public int getUnitSize() {
+		return this.UNIT_SIZE;
+	}
+	public int getNumberOfUnits() {
+		return this.NUMBER_OF_UNITS;
+	}
+}

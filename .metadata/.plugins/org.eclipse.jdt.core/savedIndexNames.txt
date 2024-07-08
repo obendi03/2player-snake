@@ -1,0 +1,7 @@
+INDEX VERSION 1.134+D:\vvsdf\bme2023-2024\osz\nhfujmappa\.metadata\.plugins\org.eclipse.jdt.core
+2972890713.index
+2105863780.index
+1865797976.index
+3476684942.index
+849468219.index
+894823376.index

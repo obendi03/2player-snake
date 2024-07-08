@@ -1,0 +1,50 @@
+package NHF;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.io.Serializable;
+import java.util.Random;
+/**
+ * Az akadályokat reprezentáló osztály a játéktáblán.
+ */
+public class Obstacle implements Serializable{
+	private int x;
+	private int y;
+	private Random random;
+	private GameBoard board;
+	private Color color;
+	
+    /**
+     * Konstruktor az Obstacle osztályhoz.
+     * Beállítja a táblát, inicializálja a színt és megváltoztatja az akadály pozícióját.
+     *
+     * @param board A játéktábla, ahol az akadályok elhelyezkednek.
+     */
+	public Obstacle(GameBoard board) {
+		this.board = board;
+		color = Color.RED;
+		this.changePosition();
+	}
+	
+    /**
+     * Visszaadja az akadály X koordinátáját.
+     *
+     * @return Az X koordináta értéke.
+     */
+	public int getX() {return x;}
+	public int getY() {return y;}
+	public void draw(Graphics graphics) {
+		graphics.setColor(Color.red);
+		graphics.fillRect(x, y, board.getUnitSize(), board.getUnitSize());
+	}
+	
+	public void changePosition() {
+	 random = new Random();
+	 int rX = random.nextInt((int)(board.getWidth() / board.getUnitSize()))*board.getUnitSize();
+	 int rY = random.nextInt((int)(board.getHeight() / board.getUnitSize()))*board.getUnitSize();
+	 
+	 this.x = rX;
+	 this.y = rY;
+	}
+}
+

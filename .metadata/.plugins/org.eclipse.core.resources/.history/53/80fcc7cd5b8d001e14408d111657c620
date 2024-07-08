@@ -1,0 +1,505 @@
+package NHF;
+
+
+import java.awt.*;
+
+import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+/**
+ * A játék vezérlését megvalósitó osztály.
+ * 
+ * Itt hivjuk meg  a játékelemeinek kirajzolását biztositó függvényeket.
+ * Kezeli a játék futtatását, a kígyók mozgását és a játékmenetet.
+ * Ellenőrzi, hogy a kigyók beleütköztek-e valamilyen akadályba, falba, egymásba.
+ * Továbbá ez az osztály felelős az egyes játékbeli komponensek kirajzolásáért.
+ */
+public class SnakeGamePanel extends JPanel implements ActionListener,Serializable{
+
+	private GameBoard board;
+	private int foodX;
+	private int foodY;
+	private boolean running = false;
+	private int playerWon = -1;
+	private int obstaclesNumber = 1;
+	private int obstaclesMaxNumber;
+	private SnakePlayer winner;
+	private Random random; 
+	private HashMap<SnakePlayer,Integer> playerIndex = new HashMap<>();
+	
+	private Timer timer;
+
+	/**
+	 * A  játékpanelt inicializáló konstruktor.
+	 * Beállítja a játéktáblát, a nehézséget, és inicializálja az alapértelmezett játékbeállításokat.
+	 *
+	 * @param board      A játéktábla, amelyen a játék zajlik.
+	 * @param difficulty A játék nehézségi szintje ('E' - könnyű, 'N' - normál, 'H' - nehéz).
+	 */
+	public SnakeGamePanel(GameBoard board,char difficulty) {
+		random = new Random();
+		switch(difficulty) {
+			case 'E':
+			obstaclesMaxNumber = 3;
+			break;
+			case 'N':
+			obstaclesMaxNumber = 5;
+			break;
+			case 'H':
+			obstaclesMaxNumber = 10;
+			break;
+		}
+		winner = null;
+		this.board = board;
+		
+		for(int i = 0;i<board.getPlayers().size();i++) {
+			playerIndex.put(board.getPlayer(i), i+1);
+		}
+		
+		
+		this.setPreferredSize(new Dimension(board.getWidth(), board.getHeight()));
+		this.setBackground(Color.DARK_GRAY);
+		this.setFocusable(true);
+		this.addKeyListener(new MyKeyAdapter());
+	}	
+	
+	/**
+	 * Visszaadja a játék nyertesét.
+	 *
+	 * @return A nyertes játékos (SnakePlayer objektum).
+	 */
+	public SnakePlayer getWinner() {
+		return winner;
+	}
+	
+	/**
+	 * Elindítja a játékot, frissíti a játékosok pontszámát, majd elkezdi a játék futását.
+	 */
+	public void startGame() {
+		for(SnakePlayer s:board.getPlayers()) {
+				refreshPlayerScore(s);
+		}
+		play();
+	}
+	/**
+	 * Lezárja a játékot és visszatér a menübe.
+	 *
+	 * @param reloadCalled true érték, ha a Save gomb lenyomásával ért véget a játék	, a  történt meg, egyébként false.
+	 */
+	public void closeGame(boolean reloadCalled) {
+		
+		if(!running || reloadCalled) {		
+			timer.stop();
+			
+			Object[] options = {"OK"};
+	   	    int n = JOptionPane.showOptionDialog(this,
+	   	                   "Nyomjon az OK gombra a menübe való visszatéréshez! ","üzenet",
+	   	                   JOptionPane.PLAIN_MESSAGE,
+	   	                   JOptionPane.QUESTION_MESSAGE,
+	   	                   null,
+	   	                   options,
+	   	                   options[0]);
+	   	   if(n==0) {
+		   	     final Window parentWindow = SwingUtilities.getWindowAncestor(SnakeGamePanel.this);
+	             parentWindow.dispose();	  	  
+             }
+		}
+	}
+	
+	/**
+	 * Visszaadja a játéktáblát, amin a játék zajlik.
+	 *
+	 * @return A játéktábla (GameBoard objektum).
+	 */
+	public GameBoard getBoard() {
+		return board;
+	}
+	
+	/**
+	 * Visszaadja a megadott játékos pontszámát.
+	 *
+	 * @param i Az index, amely a játékost azonosítja a játéktáblán.
+	 * @return A játékos pontszáma.
+	 */
+	public int getPlayerScore(int i) {
+		return board.getPlayer(i).getLength()-4;
+	}
+	
+	/**
+	 * Lekérdezhető, hogy a játék fut-e éppen.
+	 *
+	 * @return Igaz érték, ha a játék fut, egyébként hamis.
+	 */
+	public boolean gameIsRunning() {
+		return running;
+	}
+	
+	/**
+	 * Elindítja a játékot, hozzáadja az ételt a játéktáblához, és beállítja a játék futását.
+	 * Beállítja a timer-t, amely meghívja az actionPerformed metódust bizonyos időközönként.
+	 */
+	public void play() {
+		addFood();
+		running = true;		
+		timer = new Timer(350, this);//80 volt eredetileg
+		timer.start();	
+	}
+	
+	
+	
+	/*
+	 *
+	 * */
+	public void paintComponent(Graphics graphics) {
+		super.paintComponent(graphics);
+		draw(graphics);
+	}
+	/**
+	 * Ellenőrzi, hogy szükséges-e akadályokat hozzáadni a játéktáblához.
+	 * Ha kevesebb akadály van, mint a játékmódból adódó maximális szám, hozzáad egyet.
+	 */
+	public void checkAddHurdles() {
+		if(obstaclesNumber<obstaclesMaxNumber) {
+			obstaclesNumber++;
+			addHurdle();
+		}
+		if(obstaclesNumber==obstaclesMaxNumber) {
+			obstaclesNumber=obstaclesMaxNumber;
+			addHurdle();
+		}
+	}
+	
+	/**
+	 * Frissíti a paraméterül kapott játékos pontszámát, és megjeleníti a frissített pontszámot a játékmenüben.
+	 *
+	 * @param player A frissítendő játékos (SnakePlayer objektum).
+	 */
+	public void refreshPlayerScore(SnakePlayer player) {
+		int index = board.getPlayers().indexOf(player);
+		JFrame parentFrame =(JFrame) SwingUtilities.getWindowAncestor(SnakeGamePanel.this);
+		parentFrame.getContentPane();
+		
+		Component[] components = parentFrame.getContentPane().getComponents();
+		
+		String score = Integer.toString(getPlayerScore(index));
+		for (Component c : components) {
+			if(c instanceof JPanel && c.getName()=="gameMenu") {
+				JPanel gameMenuPanel = (JPanel) c;
+			
+				for (Component gameMenuPanelcomponent : gameMenuPanel.getComponents()) {						 
+					 if(gameMenuPanelcomponent instanceof JLabel && gameMenuPanelcomponent.getName()=="score1"  && board.getPlayers().indexOf(player)==0) {
+						 ((JLabel)gameMenuPanelcomponent).setText(("Player1 score: "+score));
+					 	}
+					 else if(gameMenuPanelcomponent instanceof JLabel &&  gameMenuPanelcomponent.getName()=="score2"&&  board.getPlayers().indexOf(player)==1) {
+						 ((JLabel)gameMenuPanelcomponent).setText(("Player2 score: "+score));
+					 	}
+				 }
+			}
+		}
+	}
+	
+	/**
+	 * Ellenőrzi, hogy a kígyók elértek-e az ételhez a játéktáblán.
+	 * Ha valamelyik kígyó eléri az ételt, a játékos hosszát növeli 1-gyel, ellenőrzi az akadályokat, és megváltoztatja a kaja pozicióját.
+	 */
+	public void checkFood() {
+		int playerHeadX;
+		int playerHeadY;
+	
+		for(int i = 0;i<board.getPlayers().size();i++) {
+			 playerHeadX = board.getPlayer(i).getBodyPart(0).getX();
+			 playerHeadY = board.getPlayer(i).getBodyPart(0).getY();
+			
+			 if(playerHeadX == foodX && playerHeadY == foodY) {
+				board.getPlayer(i).grow();
+				checkAddHurdles();
+				addFood();
+				refreshPlayerScore(board.getPlayer(i));
+			}	
+		}
+	}
+
+	/**
+	 * Rajzolja ki az ételt a megadott grafikus felületre.
+	 *
+	 * @param graphics A grafikus objektum, amelyre rajzolni kell az ételt.
+	 */
+	public void drawFood(Graphics graphics) {
+		graphics.setColor(new Color(210, 115, 90));
+		graphics.fillOval(foodX, foodY, board.getUnitSize(), board.getUnitSize());
+	}
+	
+	/**
+	 * Kirajzolja a board obejktum elemeit megadott grafikus felületre. 
+	 * Az egyes objektumok rajzoló metódusának meghivásával
+	 *
+	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játéktáblát és elemeit.
+	 */
+	public void drawBoard(Graphics graphics) {
+		
+		for(int i = 0;i<board.getPlayers().size();i++) {
+			board.getPlayer(i).draw(graphics);
+		}
+		
+		List<Obstacle> obs = new ArrayList<>();
+		obs.addAll(board.getObstacles()) ;
+		
+		for(int i = 0;i<obstaclesNumber;i++) {
+			obs.get(i).draw(graphics);
+		}
+	}
+	
+	/**
+	 *A running értéke alapján rajzolja ki a pályára a játékosokat, akadálsokat.
+	 *Amennyiben a játék véget ér, gameover metódus meghivásával kiirja a győztest.
+	 *
+	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játék összes elemét.
+	 */
+	public void draw(Graphics graphics) {
+
+		if (running){
+			drawBoard(graphics);
+			drawFood(graphics);
+		 }	
+		else if(winner != null){
+			gameOver(graphics,winner);
+		}
+	}
+	
+	/**
+	 * Hozzáadja az ételt a játéktáblához, egy új véletlenszerű pozícióra.
+	 *  Ügyelve arra, hogy az étel ne essen valemelyik akadályra.
+	 */
+	public void addFood() {
+		foodX = random.nextInt((int)(board.getWidth() / board.getUnitSize()))*board.getUnitSize();
+		foodY = random.nextInt((int)(board.getHeight() / board.getUnitSize()))* board.getUnitSize();
+		
+			for(int i=0; i<obstaclesNumber;i++) {
+				if(board.getObstacles().get(i).getX()==foodX && board.getObstacles().get(i).getY()==foodY) {
+					foodX = random.nextInt((int)(board.getWidth() / board.getUnitSize()))*board.getUnitSize();
+					foodY = random.nextInt((int)(board.getHeight() / board.getUnitSize()))* board.getUnitSize();
+				}
+			}
+	}
+	
+	/**
+	 * Hozzáad akadályokat a játéktáblához, ügyelve arra, hogy az akadályok 
+	 * ne essenek közvetlenül a kigyónak az aktuális poziciójára.
+	 */
+	public void addHurdle() {
+		
+		List<Obstacle> obs = new ArrayList<>();
+		obs.addAll(board.getObstacles()) ;
+		for(int i = 0;i<obstaclesMaxNumber;i++) {
+			obs.get(i).changePosition();
+			for(SnakePlayer s: board.getPlayers()){
+				if(obs.get(i).getX()==s.getBodyPart(0).getX() && obs.get(i).getY()==s.getBodyPart(0).getY()) {
+					obs.get(i).changePosition();
+				}
+			}
+		}
+	}
+	
+	
+	/**
+	 * Ellenőrzi, hogy a kígyók összeütköztek-e önmagukkal vagy egymással.
+	 */
+	public void checkSnakeRunsIntoSnake() {
+		
+		int playerHeadX;
+		int playerHeadY;
+		int playerIndex;
+		for(int i = 0;i<board.getPlayers().size();i++) {
+				 playerHeadX = board.getPlayer(i).getBodyPart(0).getX();
+				 playerHeadY = board.getPlayer(i).getBodyPart(0).getY();
+		
+				 for(int j = 0;j<board.getPlayers().size();j++) {	
+					 if( board.getPlayer(j)!= null) {
+					 
+					 for (int k = 1; k<=board.getPlayer(j).getLength();k++) { 					
+						
+						 if(board.getPlayer(j).getBodyPart(k) != null ) {						
+							//snake runs itself
+							if(playerHeadX == board.getPlayer(j).getBodyPart(k).getX() && playerHeadY  == board.getPlayer(j).getBodyPart(k).getY()&& board.getPlayer(j) ==board.getPlayer(i)) {
+								playerIndex = i;
+								 System.out.println(i);
+									if(playerIndex != -1) {
+										board.removePlayer(playerIndex);	
+										System.out.println("checkSnakeRunsIntoSnake1");											
+										if(board.getPlayers().size()==1 && board.getPlayer(0) != null) {	
+											running = false;	
+											winner = board.getPlayer(0);	
+											return;
+										}							
+									}								
+							}
+							
+							//snake runs into the other snake
+							if (playerHeadX == board.getPlayer(j).getBodyPart(k).getX() && playerHeadY  == board.getPlayer(j).getBodyPart(k).getY()){						
+								playerIndex = i;	
+								if(playerIndex != -1) {
+									System.out.println("checkSnakeRunsIntoSnake2");			
+									if(board.getPlayers().size()==2) {	
+										running = false;
+										if(board.getPlayer(0).getLength()>board.getPlayer(1).getLength()) {
+											winner = board.getPlayer(0);
+											return;
+										}
+										else {
+											winner = board.getPlayer(1);
+											return;
+										}
+									
+									}				
+								 }
+							   }
+							 }
+					 		}
+						}
+				 }
+			}
+		}
+	
+	/**
+	 * Ellenőrzi, hogy a kígyók nekifutottak-e a falnak.
+	 */
+	public void checkSnakeRunsIntoWall() {
+		int playerHeadX;
+		int playerHeadY;
+		int playerIdx;
+		for(int i = 0;i<board.getPlayers().size();i++) {		
+			 playerHeadX = board.getPlayer(i).getBodyPart(0).getX();
+			 playerHeadY = board.getPlayer(i).getBodyPart(0).getY();
+			if (playerHeadX < 0 || playerHeadX > board.getWidth() || playerHeadY < 0 || playerHeadY > board.getHeight()) {
+				playerIdx = i;
+				if(playerIdx != -1) {
+					System.out.println("checkSnakeRunsIntoWall");
+					board.removePlayer(playerIdx);
+					if(board.getPlayers().size()==1) {
+						running = false;
+						winner = board.getPlayer(0);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Ellenőrzi, hogy a kígyók nekifutottak-e az akadálynak.
+	 */
+	public void checkSnakeRunsIntoObstacle() {
+		int playerHeadX;
+		int playerHeadY;
+		int playerIdx;
+		
+		for(int i = 0;i<board.getPlayers().size();i++) {
+			 playerHeadX = board.getPlayer(i).getBodyPart(0).getX();
+			 playerHeadY = board.getPlayer(i).getBodyPart(0).getY();
+			
+			 for (int j = 0; j<=obstaclesNumber;j++) {
+				if (playerHeadX == board.getObstacles().get(j).getX() && playerHeadY ==  board.getObstacles().get(j).getY()) {			
+					playerIdx = i;
+					if(playerIdx != -1) {
+						board.removePlayer(playerIdx);
+						if(board.getPlayers().size()==1) {
+							System.out.println("checkSnakeRunsIntoObstacle");
+							winner = board.getPlayer(0);
+							running = false;
+						}
+					}
+				}
+		 }
+		}
+	}
+	
+	/**
+	 * Meghivja az ellenörző metódusokat, amik alapján dönt, hogy véget ér-e a játék.
+	 * 
+	 * */
+	public void checkHit() {
+		checkSnakeRunsIntoWall();
+		checkSnakeRunsIntoSnake();
+		checkSnakeRunsIntoObstacle();
+			if(!running) {
+				timer.stop();
+			}
+	}
+	/**
+	 * A játék végét jelzi és kiírja, hogy melyik játékos nyert a megadott grafikus felületre.
+	 *
+	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játék végét.
+	 * @param winner   Az a kígyójátékos, aki nyert a játékban.
+	 */
+	public void gameOver(Graphics graphics,SnakePlayer winner) {
+		graphics.setColor(Color.red);
+		graphics.setFont(new Font("Sans serif", Font.ROMAN_BASELINE, 50));
+		FontMetrics metrics = getFontMetrics(graphics.getFont());
+			
+		graphics.drawString("Player"+playerIndex.get(winner)+" won!", (board.getWidth() - metrics.stringWidth("Player lost!")) / 2, board.getHeight() / 4);
+	}
+	
+	/**
+	 * A játék eseményeit kezeli a kígyók mozgásától kezdve az ütközés ellenőrzéséig.
+	 *Amennyiben a running értéke false, bezárja a játékot megjelenitő ablakot.
+	 * @param arg0 Az eseményobjektum, ami aktiválta ezt a metódust.
+	 */
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		if (running) {	
+			for(int i = 0;i<board.getPlayers().size();i++) {
+				board.getPlayer(i).move();
+			}
+			checkFood();
+			checkHit();
+		}
+		repaint();
+		closeGame(false);
+	}
+	
+	/**
+	 * Egy belső osztály, amelynek segitségével az irányításra vonatkozó  eseményeket kezeli.
+	 */
+	public class MyKeyAdapter extends KeyAdapter implements Serializable{
+		
+	/**
+	 * Visszaadja, hogy a beillentyűzet lenyomására, melyik irányba kell forduljon a kigyó.
+	 * 
+	 * @param e paraméterül kapott, lenyomott gomb 
+	 * 
+	 * */	
+	public void keyPressed(KeyEvent e) {
+			char dir;
+				for(int i = 0; i< board.getPlayers().size();i++) {
+					if(board.getPlayer(i).containsKey(e.getKeyCode())) {
+						dir = board.getPlayer(i).getControl(e.getKeyCode());
+						board.getPlayer(i).setDirection(dir);
+					}
+			}
+		}
+	}
+	/**
+	 * Elmenti az aktuális játékot egy fájlba.
+	 */
+	public void saveToFile() {
+		try {
+			FileOutputStream f = new FileOutputStream("lastgame.txt");
+			ObjectOutputStream out =new ObjectOutputStream(f);
+			out.writeObject(this);
+			out.close();
+			}
+			catch(IOException ex) { 
+				System.out.println("BAJ VAN!");
+			}
+		}
+	}
