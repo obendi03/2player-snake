@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import java.io.Serializable;
 import java.util.Random;
 /**
- * Az akadályokat reprezentáló osztály a játéktáblán.
+ * Class representing obstacles on the game board.
  */
 public class Obstacle implements Serializable{
 	private int x;
@@ -15,10 +15,10 @@ public class Obstacle implements Serializable{
 	private Color color;
 	
     /**
-     * Konstruktor az Obstacle osztályhoz.
-     * Beállítja a táblát, inicializálja a színt és megváltoztatja az akadály pozícióját.
+     * Constructor for Obstacle class.
+     * Sets the game board, initializes the color, and changes the position of the obstacle.
      *
-     * @param board A játéktábla, ahol az akadályok elhelyezkednek.
+     * @param board The game board where obstacles are placed.
      */
 	public Obstacle(GameBoard board) {
 		this.board = board;
@@ -26,33 +26,34 @@ public class Obstacle implements Serializable{
 		this.changePosition();
 	}
 	
-    /**
-     * Visszaadja az akadály X koordinátáját.
+   /**
+     * Returns the X coordinate of the obstacle.
      *
-     * @return Az X koordináta értéke.
+     * @return The value of the X coordinate.
      */
 	public int getX() {return x;}
 	
-    /**
-     * Visszaadja az akadály Y koordinátáját.
+   /**
+     * Returns the Y coordinate of the obstacle.
      *
-     * @return Az Y koordináta értéke.
+     * @return The value of the Y coordinate.
      */
 	public int getY() {return y;}
 
+ 
     /**
-     * Rajzolja az akadályt a megadott grafikus objektumra.
+     * Draws the obstacle on the provided graphics object.
      *
-     * @param graphics A grafikus objektum, amire az akadályt rajzoljuk.
+     * @param graphics The graphics object to draw the obstacle on.
      */
 	public void draw(Graphics graphics) {
 		graphics.setColor(Color.red);
 		graphics.fillRect(x, y, board.getUnitSize(), board.getUnitSize());
 	}
 	
-	   /**
-     * Megváltoztatja az akadály pozícióját a játéktáblán belül.
-     * Az akadály véletlenszerűen kerül elhelyezésre a táblán.
+	 /**
+     * Changes the position of the obstacle within the game board.
+     * The obstacle is randomly placed on the board.
      */
 	public void changePosition() {
 	 random = new Random();

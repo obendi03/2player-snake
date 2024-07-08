@@ -12,11 +12,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A kígyót reprezentáló osztály a játékban. * 
- * Ebben az osztályban vannak megvalósitva a kigyó irányitásához szükséges fontosabb függények,
- * amik a kigyó vezérléséhez, étel felszedése esetén a növekedéshez szükséges függvények. 
- * Illetve a grafikus megjelenítéséhez szükséges függvény.
- *  */
+ * Class representing the snake in the game.
+ * This class implements essential methods for controlling the snake,
+ * handling growth upon eating food, and methods for graphical representation.
+ */
 public class SnakePlayer implements Serializable {
     private char direction;
     private Color headColor;
@@ -25,16 +24,16 @@ public class SnakePlayer implements Serializable {
     private List<SnakeBodyPart> body;
     private Map<Integer, Character> control;
 
-    /**
-     * Konstruktor létrehozza a SnakePlayer objektumot.
+     /**
+     * Constructor to create a SnakePlayer object.
      *
-     * @param board    A GameBoard példány, pálya amihez a kígyó tartozik.
-     * @param moveUP   A felfelé mozgatást vezérlő billentyűkód.
-     * @param moveDown A lefelé mozgatást vezérlő billentyűkód.
-     * @param moveLeft A balra mozgatást vezérlő billentyűkód.
-     * @param moveRight A jobbra mozgatást vezérlő billentyűkód.
-     * @param head     A kígyó fejének színe.
-     * @param body     A kígyó testrészei.
+     * @param board    The GameBoard instance that the snake belongs to.
+     * @param moveUP   Key code for moving the snake up.
+     * @param moveDown Key code for moving the snake down.
+     * @param moveLeft Key code for moving the snake left.
+     * @param moveRight Key code for moving the snake right.
+     * @param head     Color of the snake's head.
+     * @param body     Body parts of the snake.
      */
     public SnakePlayer(GameBoard board, int moveUP, int moveDown, int moveLeft, int moveRight, Color head, List<SnakeBodyPart> body) {
         this.board = board;
@@ -49,8 +48,8 @@ public class SnakePlayer implements Serializable {
         control.put(moveRight, 'R');
     }
 
-    /**
-     * Mozgatja a kígyót az aktuális irányba.
+       /**
+     * Moves the snake in the current direction.
      */
     public void move() {
     	int tmp;
@@ -74,30 +73,30 @@ public class SnakePlayer implements Serializable {
 		}
     }
 
-    /**
-     * Beállítja a kígyó irányát.
+   /**
+     * Sets the direction of the snake.
      *
-     * @param direction Az irány beállítása. lehetséges értékek: ('F', 'L', 'J', vagy 'B').
+     * @param direction The direction to set ('U', 'D', 'L', or 'R').
      */
     public void setDirection(char direction) {
         this.direction = direction;
     }
 
-    /**
-     * Beállítja a kígyó fejének pozícióját.
+     /**
+     * Sets the position of the snake's head.
      *
-     * @param x Az x-koordináta.
-     * @param y Az y-koordináta.
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
      */
     public void setHead(int x, int y) {
         body.get(0).setX(x);
         body.get(0).setY(y);
     }
 
-    /**
-     * Kirajzolja a kígyót a megadott Graphics objektumra.
+  /**
+     * Draws the snake on the provided Graphics object.
      *
-     * @param graphics A Graphics objektum, amire rajzol.
+     * @param graphics The Graphics object to draw on.
      */
     public void draw(Graphics graphics) {
 		graphics.setColor(headColor);
@@ -109,48 +108,48 @@ public class SnakePlayer implements Serializable {
 		}
 	}
 
-    /**
-     * Visszaadja a megadott billentyűhöz tartozó irányt.
+     /**
+     * Returns the direction associated with the given key.
      *
-     * @param key A billentyűkód, amelyhez tartozó irányt szeretnénk lekérni.
-     * @return Az irány ahova fordul a kigyó('F', 'L', 'J', 'B').
+     * @param key The key code for which the direction is requested.
+     * @return The direction ('U', 'D', 'L', 'R') associated with the key.
      */
     public char getControl(int key) {
         return control.get(key);
     }
 
-    /**
-     * Ellenőrzi, hogy a vezérlési térkép tartalmazza-e a megadott kulcsot.
+     /**
+     * Checks if the control map contains the given key.
      *
-     * @param key Az ellenőrizendő billentyűkód.
-     * @return True, ha a vezérlési billentyűkódot tartalmazza, egyébként false.
+     * @param key The key code to check.
+     * @return True if the control map contains the key, otherwise false.
      */
     public Boolean containsKey(int key) {
         return control.containsKey(key) ? true : false;
     }
 
-    /**
-     * Növeli a kígyó hosszát egy új testrész hozzáadásával.
+     /**
+     * Increases the length of the snake by adding a new body part.
      */
     public void grow() {
-        body.add(new SnakeBodyPart(body.get(1).getColor()));  // Új testrész hozzáadása a kígyóhoz
+        body.add(new SnakeBodyPart(body.get(1).getColor()));  // Adding a new body part to the snake
     }
 
-    /**
-     * Visszaadja a kígyó jelenlegi hosszát.
+     /**
+     * Returns the current length of the snake.
      *
-     * @return A kígyó hossza (fejet nem számítva).
+     * @return The length of the snake (excluding the head).
      */
     public int getLength() {
         length = body.size() - 1;
         return length;
     }
 
-    /**
-     * Lekéri a kígyónak, egy adott testrészét az index alapján.
+     /**
+     * Retrieves a specific body part of the snake based on the index.
      *
-     * @param i A lekérdezni kívánt testrész indexe.
-     * @return A megadott indexű SnakeBodyPart objektum.
+     * @param i The index of the body part to retrieve.
+     * @return The SnakeBodyPart object at the specified index.
      */
     public SnakeBodyPart getBodyPart(int i) {
         if (i >= 0 && i <= this.getLength()) {

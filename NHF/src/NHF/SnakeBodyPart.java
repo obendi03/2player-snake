@@ -3,18 +3,18 @@ package NHF;
 import java.awt.Color;
 import java.io.Serializable;
 /**
- * A Kígyó testrészét reprezentáló osztály, ebből az objektumból épitjük fel a kigyó testét.
+ * Class representing a body part of the snake, used to build the snake's body.
  */
 public class SnakeBodyPart implements Serializable{
 	private int x;
 	private int y;
 	private Color tailColor;
 	
-    /**
-     * Konstruktor a SnakeBodyPart osztályhoz.
-     * Beállítja a farok színét és az (x, y) koordinátákat.
+     /**
+     * Constructor for SnakeBodyPart class.
+     * Sets the color of the body part and its (x, y) coordinates.
      *
-     * @param tailColor A testrész színe.
+     * @param tailColor The color of the body part.
      */
 	public SnakeBodyPart(Color tailColor) {
 		this.tailColor = tailColor;
@@ -23,39 +23,42 @@ public class SnakeBodyPart implements Serializable{
 	}
 	
 
-    /**
-     * Visszaadja a testrész színét.
+       /**
+     * Returns the color of the body part.
      *
-     * @return A testrész színe.
+     * @return The color of the body part.
      */
 	public Color getColor() {return tailColor;}
 	
-    /**
-     * Visszaadja a testrész X koordinátáját.
+   /**
+     * Returns the X coordinate of the body part.
      *
-     * @return Az X koordináta értéke.
+     * @return The value of the X coordinate.
      */
 	public int getX() {return x;}
 	
-	  /**
-     * Visszaadja a testrész Y koordinátáját.
+  /**
+     * Returns the Y coordinate of the body part.
      *
-     * @return Az Y koordináta értéke.
+     * @return The value of the Y coordinate.
      */
 	public int getY() {return y;}
 	
-	  /**
-     * Beállítja a testrész X koordinátáját.
-     *
-     * @param x Az X koordináta értéke.
-     */
-	public void setX(int x) {this.x = x;}
-	
-
     /**
-     * Beállítja a testrész Y koordinátáját.
+     * Sets the X coordinate of the body part.
      *
-     * @param y Az Y koordináta értéke.
+     * @param x The value of the X coordinate.
      */
-	public void setY(int y) {this.y = y;}
+     public void setX(int x) {
+          this.x = x;
+     }
+
+     /**
+      * Sets the Y coordinate of the body part.
+     *
+     * @param y The value of the Y coordinate.
+     */
+     public void setY(int y) {
+          this.y = y;
+     }
 }

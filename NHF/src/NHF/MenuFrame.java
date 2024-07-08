@@ -19,8 +19,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 /**
- * A menüt reprezentáló osztály, a Kígyó játékhoz.
- * Kezeli a játékmód kiválasztását és a korábbi játék betöltését.Illetve a korábban lementett játék betöltését
+ * Class representing the menu for the Snake game.
+ * Handles game mode selection and loading of previous games.
  */
 public class MenuFrame extends JFrame implements ActionListener {
 	JButton easyButton;
@@ -31,8 +31,8 @@ public class MenuFrame extends JFrame implements ActionListener {
 	private char gameModeChoice;
 	
 	  /**
-     * Konstruktor az MenuFrame osztályhoz.
-     * Beállítja a menü ablakot és létrehozza a gombokat a különböző játékmódokhoz (könnyű, normál, nehéz).
+     * Constructor for MenuFrame class.
+     * Sets up the menu window and creates buttons for different game modes (Easy, Normal, Hard).
      */
 	public MenuFrame() {
 		super("2 Player Snake Game");
@@ -75,10 +75,10 @@ public class MenuFrame extends JFrame implements ActionListener {
 		this.setVisible(true);
 
 	}
-	 /**
-     * Inicializálja a játékot a választott játékmóddal. A választott játékmód az akadályok számában mutatkozik meg
+	  /**
+     * Initializes the game with the chosen game mode. The game mode affects the number of obstacles.
      *
-     * @param gameType A választott játékmód.
+     * @param gameType The chosen game mode.
      */
 	public void initGame(char gameType) {
 	GameBoard board = new GameBoard();	
@@ -126,9 +126,10 @@ public class MenuFrame extends JFrame implements ActionListener {
 	SnakeGameFrame sf = new SnakeGameFrame(panel);
 		
 }
-	  /**
-     * ActionListener interfész metódusa a játékmódkiválasztását biztositó gombok eseménykezeléséhez.
-     * @param ae Az esemény, amely kiváltja a metódust.
+    /**
+     * ActionListener interface method to handle events for game mode selection buttons.
+     *
+     * @param ae The event that triggered the method.
      */
 	public void actionPerformed(ActionEvent ae) {
 	
@@ -154,8 +155,8 @@ public class MenuFrame extends JFrame implements ActionListener {
 		}
 
 	}
-	   /**
-     * Betölti a legutóbb lementett játékot a fájlból.
+	  /**
+     * Loads the last saved game from file.
      */
 	public void lastGameFromFile() {
 		SnakeGamePanel panel = null;
@@ -172,9 +173,9 @@ public class MenuFrame extends JFrame implements ActionListener {
 		SnakeGameFrame sf2 = new SnakeGameFrame(panel);
 	}
     /**
-     * Visszaadja a kiválasztott játékmódot.
+     * Returns the selected game mode.
      *
-     * @return A kiválasztott játékmód.
+     * @return The selected game mode.
      */
 	public char getGameMode() {
 		return gameModeChoice;

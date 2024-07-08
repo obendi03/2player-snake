@@ -26,9 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 /**
- * Az ablak, amire kirajzoljuk a pályát, játékosokat a játék során.
+ * The window where the game board and players are displayed during the game.
  *
- *Megjeleniti a két játékos pontszámát, illetve itt lehet a játék során a Save gomb lenyomásával lementeni a játékot.
+ * Displays the scores of the two players and provides a "Save" button to save the game state during gameplay.
  */
 public class SnakeGameFrame extends JFrame implements ActionListener,Serializable{
 
@@ -39,10 +39,10 @@ public class SnakeGameFrame extends JFrame implements ActionListener,Serializabl
 	private JLabel score2;
 	
     /**
-     * Konstruktor a SnakeGameFrame osztályhoz.
-     * Beállítja az ablakon megjelenő gombot, és eredménykijelző labeleket.
+     * Constructor for SnakeGameFrame.
+     * Sets up the button and score display labels on the window.
      *
-     * @param panel A SnakeGamePanel objektum, amelyet hozzáadunk az ablakhoz.
+     * @param panel The SnakeGamePanel object to be added to the frame.
      */
 	public SnakeGameFrame(SnakeGamePanel panel) {
 		this.panel = panel;
@@ -78,11 +78,11 @@ public class SnakeGameFrame extends JFrame implements ActionListener,Serializabl
 		this.setVisible(true);
 		panel.startGame();
   }
-	   /**
-     * A Save gomb lenyomását kezelő metódus.
-     * Elmenti az aktuális játékállapotot fájlba, és bezárja a játékot.
+	  /**
+     * Handles the action performed when the "Save" button is pressed.
+     * Saves the current game state to a file and closes the game.
      *
-     * @param ae Az esemény, amelyet a Save gomb lenyomása váltott ki.
+     * @param ae The event triggered by pressing the "Save" button.
      */
 	public void actionPerformed(ActionEvent ae) {
 		panel.saveToFile();

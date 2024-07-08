@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 /**
- * A játéktábla osztály reprezentációja.
- * Ebben az osztályban tároljuk a játék során vezérelendő akadályokat, játékosokat. Illetve ezen az objektumon keresztül érjük el őket.
- * Kezeli a játékosok információit és az akadályokat a táblán.
+ * Representation of the game board class.
+ * This class stores and manages obstacles and players during the game.
+ * It handles player information and obstacles on the board.
  */
 public class GameBoard implements Serializable {
 	private  final int WIDTH = 600;
@@ -16,30 +16,30 @@ public class GameBoard implements Serializable {
 	private List<SnakePlayer> players = new  ArrayList<>();
 	private List<Obstacle> obstacles;
 	
-	/**
-     * Beállítja az akadályokat a játéktáblán.
+   /**
+     * Sets the obstacles on the game board.
      *
-     * @param obstacles Az akadályok listája.
+     * @param obstacles The list of obstacles to set.
      */
 	public void setObstacles(List<Obstacle> obstacles) {
 		this.obstacles = new ArrayList<>();
 		this.obstacles.addAll(obstacles);
 	}
 	
-	 /**
-     * Hozzáad egy játékost a játéktáblához.
+  /**
+     * Adds a player to the game board.
      *
-     * @param player A hozzáadandó SnakePlayer objektum.
+     * @param player The SnakePlayer object to add.
      */
 	public void setPlayer(SnakePlayer player) {
 		players.add(player);
 	}
 	
-	   /**
-     * Lekéri a megadott indexű játékost.
+   /**
+     * Retrieves the player at the specified index.
      *
-     * @param i A lekérni kívánt játékos indexe.
-     * @return A SnakePlayer objektum a megadott indexen, vagy null, ha nem található a játékos.
+     * @param i The index of the player to retrieve.
+     * @return The SnakePlayer object at the specified index, or null if not found.
      */
 	public SnakePlayer getPlayer(int i) {
 		if(i>=0 && i<players.size()) {
@@ -48,10 +48,10 @@ public class GameBoard implements Serializable {
 		return null;
 	}
 	
-    /**
-     * Eltávolítja a megadott indexű játékost a játéktábláról.
+ /**
+     * Removes the player at the specified index from the game board.
      *
-     * @param i Az eltávolítandó játékos indexe.
+     * @param i The index of the player to remove.
      */
 	public void removePlayer(int i) {
 		if(i>=0 && i<players.size()) {
@@ -59,68 +59,68 @@ public class GameBoard implements Serializable {
 		}
 	}
 	
-	   /**
-     * Lekéri a játékosok listáját a játéktábláról.
+      /**
+     * Retrieves the list of players on the game board.
      *
-     * @return A pályán tartózkodó  SnakePlayer objektumok listája.
+     * @return The list of SnakePlayer objects on the board.
      */
 	public List<SnakePlayer> getPlayers() {
 		return players;
 	}
 	
-    /**
-     * Lekéri az akadályok listáját a játéktáblán.
+     /**
+     * Retrieves the list of obstacles on the game board.
      *
-     * @return Az akadályokat reprezentáló Obstacle objektumok listája.
+     * @return The list of Obstacle objects representing the obstacles.
      */
 	public List<Obstacle> getObstacles() {
 		return obstacles;
 	}
 	
 	
-	   /**
-     * Beállítja az akadályok listájának méretét.
+    /**
+     * Sets the size of the obstacles list.
      *
-     * @param size Az akadályok listájának beállítandó mérete.
+     * @param size The size to set for the obstacles list.
      */
 	public void setObstaclesSize(int size) {
 		obstacles = new ArrayList<>(size);
 	}
 	
 	
+       /**
+     * Retrieves the width of the game board.
+     *
+     * @return The width of the game board.
+     */
+    public int getWidth() {
+        return this.WIDTH;
+    }
+
     /**
-     * Lekéri a játéktábla szélességét.
+     * Retrieves the height of the game board.
      *
-     * @return A játéktábla szélessége.
+     * @return The height of the game board.
      */
-	public int getWidth() {
-		return this.WIDTH;
-	}
-	
-	 /**
-     * Lekéri a játéktábla magasságát.
+    public int getHeight() {
+        return this.HEIGHT;
+    }
+
+    /**
+     * Retrieves the unit size of a block on the game board.
      *
-     * @return A játéktábla magassága.
+     * @return The unit size on the game board.
      */
-	public int getHeight() {
-		return this.HEIGHT;
-	}
-	
-	  /**
-     * Lekéri a játéktábla egy blokkjának a méretét.
+    public int getUnitSize() {
+        return this.UNIT_SIZE;
+    }
+
+    /**
+     * Retrieves the number of units (blocks) on the game board.
      *
-     * @return A blokkméret a játéktáblán.
+     * @return The number of units (blocks) on the game board.
      */
-	public int getUnitSize() {
-		return this.UNIT_SIZE;
-	}
-	
-	  /**
-     * Lekéri a játéktáblán lévő blokkok számát.
-     *
-     * @return Az  blokkok száma a játéktáblán.
-     */
-	public int getNumberOfUnits() {
-		return this.NUMBER_OF_UNITS;
-	}
+    public int getNumberOfUnits() {
+        return this.NUMBER_OF_UNITS;
+    }
 }

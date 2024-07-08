@@ -18,12 +18,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 /**
- * A játék vezérlését megvalósitó osztály.
+ * Class responsible for controlling the game.
  * 
- * Itt hivjuk meg  a játékelemeinek kirajzolását biztositó függvényeket.
- * Kezeli a játék futtatását, a kígyók mozgását és a játékmenetet.
- * Ellenőrzi, hogy a kigyók beleütköztek-e valamilyen akadályba, falba, egymásba.
- * Továbbá ez az osztály felelős az egyes játékbeli komponensek kirajzolásáért.
+ * This class invokes functions responsible for drawing game elements.
+ * It manages the game execution, snake movements, and gameplay.
+ * It checks collisions with obstacles, walls, and between snakes.
+ * Also, it is responsible for drawing individual game components.
  */
 public class SnakeGamePanel extends JPanel implements ActionListener,Serializable{
 
@@ -40,13 +40,13 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	
 	private Timer timer;
 
-	/**
-	 * A  játékpanelt inicializáló konstruktor.
-	 * Beállítja a játéktáblát, a nehézséget, és inicializálja az alapértelmezett játékbeállításokat.
-	 *
-	 * @param board      A játéktábla, amelyen a játék zajlik.
-	 * @param difficulty A játék nehézségi szintje ('E' - könnyű, 'N' - normál, 'H' - nehéz).
-	 */
+	  /**
+     * Constructor initializing the game panel.
+     * Sets up the game board, difficulty level, and initializes default game settings.
+     *
+     * @param board      The game board on which the game is played.
+     * @param difficulty The difficulty level of the game ('E' - easy, 'N' - normal, 'H' - hard).
+     */
 	public SnakeGamePanel(GameBoard board,char difficulty) {
 		random = new Random();
 		switch(difficulty) {
@@ -74,29 +74,29 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		this.addKeyListener(new MyKeyAdapter());
 	}	
 	
-	/**
-	 * Visszaadja a játék nyertesét.
-	 *
-	 * @return A nyertes játékos (SnakePlayer objektum).
-	 */
+	 /**
+     * Returns the winner of the game.
+     *
+     * @return The winning player (SnakePlayer object).
+     */
 	public SnakePlayer getWinner() {
 		return winner;
 	}
 	
-	/**
-	 * Elindítja a játékot, frissíti a játékosok pontszámát, majd elkezdi a játék futását.
-	 */
+	  /**
+     * Starts the game, updates players' scores, and begins game execution.
+     */
 	public void startGame() {
 		for(SnakePlayer s:board.getPlayers()) {
 				refreshPlayerScore(s);
 		}
 		play();
 	}
-	/**
-	 * Lezárja a játékot és visszatér a menübe.
-	 *
-	 * @param reloadCalled true érték, ha a Save gomb lenyomásával ért véget a játék	, a  történt meg, egyébként false.
-	 */
+  /**
+     * Closes the game and returns to the menu.
+     *
+     * @param reloadCalled true if the game ended with pressing the Save button, otherwise false.
+     */
 	public void closeGame(boolean reloadCalled) {
 		
 		if(!running || reloadCalled) {		
@@ -117,38 +117,38 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 	
-	/**
-	 * Visszaadja a játéktáblát, amin a játék zajlik.
-	 *
-	 * @return A játéktábla (GameBoard objektum).
-	 */
+   /**
+     * Returns the game board where the game is played.
+     *
+     * @return The game board (GameBoard object).
+     */
 	public GameBoard getBoard() {
 		return board;
 	}
 	
-	/**
-	 * Visszaadja a megadott játékos pontszámát.
-	 *
-	 * @param i Az index, amely a játékost azonosítja a játéktáblán.
-	 * @return A játékos pontszáma.
-	 */
+	  /**
+     * Returns the score of the specified player.
+     *
+     * @param i The index identifying the player on the game board.
+     * @return The player's score.
+     */
 	public int getPlayerScore(int i) {
 		return board.getPlayer(i).getLength()-4;
 	}
 	
-	/**
-	 * Lekérdezhető, hogy a játék fut-e éppen.
-	 *
-	 * @return Igaz érték, ha a játék fut, egyébként hamis.
-	 */
+	  /**
+     * Checks if the game is currently running.
+     *
+     * @return True if the game is running, otherwise false.
+     */
 	public boolean gameIsRunning() {
 		return running;
 	}
 	
 	/**
-	 * Elindítja a játékot, hozzáadja az ételt a játéktáblához, és beállítja a játék futását.
-	 * Beállítja a timer-t, amely meghívja az actionPerformed metódust bizonyos időközönként.
-	 */
+     * Starts the game, adds food to the game board, and sets the game running.
+     * Sets the timer that invokes the actionPerformed method at certain intervals.
+     */
 	public void play() {
 		addFood();
 		running = true;		
@@ -158,17 +158,19 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	
 	
 	
-	/*
-	 *
-	 * */
+   /**
+     * Paints the component, overriding the JPanel's paintComponent method.
+     *
+     * @param graphics The graphics object on which to draw.
+     */
 	public void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		draw(graphics);
 	}
-	/**
-	 * Ellenőrzi, hogy szükséges-e akadályokat hozzáadni a játéktáblához.
-	 * Ha kevesebb akadály van, mint a játékmódból adódó maximális szám, hozzáad egyet.
-	 */
+/**
+     * Checks if obstacles need to be added to the game board.
+     * Adds one obstacle if there are fewer obstacles than the maximum allowed.
+     */
 	public void checkAddHurdles() {
 		if(obstaclesNumber<obstaclesMaxNumber) {
 			obstaclesNumber++;
@@ -180,11 +182,11 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 	
-	/**
-	 * Frissíti a paraméterül kapott játékos pontszámát, és megjeleníti a frissített pontszámot a játékmenüben.
-	 *
-	 * @param player A frissítendő játékos (SnakePlayer objektum).
-	 */
+  /**
+     * Refreshes the score of the given player and updates the score display in the game menu.
+     *
+     * @param player The player to update (SnakePlayer object).
+     */
 	public void refreshPlayerScore(SnakePlayer player) {
 		int index = board.getPlayers().indexOf(player);
 		JFrame parentFrame =(JFrame) SwingUtilities.getWindowAncestor(SnakeGamePanel.this);
@@ -209,10 +211,10 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 	
-	/**
-	 * Ellenőrzi, hogy a kígyók elértek-e az ételhez a játéktáblán.
-	 * Ha valamelyik kígyó eléri az ételt, a játékos hosszát növeli 1-gyel, ellenőrzi az akadályokat, és megváltoztatja a kaja pozicióját.
-	 */
+  /**
+     * Checks if any snake has reached the food on the game board.
+     * Increases the length of the snake that reaches the food, checks obstacles, and changes the food position.
+     */
 	public void checkFood() {
 		int playerHeadX;
 		int playerHeadY;
@@ -230,22 +232,22 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 
-	/**
-	 * Rajzolja ki az ételt a megadott grafikus felületre.
-	 *
-	 * @param graphics A grafikus objektum, amelyre rajzolni kell az ételt.
-	 */
+   /**
+     * Draws the food on the specified graphics surface.
+     *
+     * @param graphics The graphics object on which to draw the food.
+     */
 	public void drawFood(Graphics graphics) {
 		graphics.setColor(new Color(210, 115, 90));
 		graphics.fillOval(foodX, foodY, board.getUnitSize(), board.getUnitSize());
 	}
 	
-	/**
-	 * Kirajzolja a board obejktum elemeit megadott grafikus felületre. 
-	 * Az egyes objektumok rajzoló metódusának meghivásával
-	 *
-	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játéktáblát és elemeit.
-	 */
+    /**
+     * Draws elements of the board object on the specified graphics surface.
+     * Calls the drawing methods of individual objects.
+     *
+     * @param graphics The graphics object on which to draw the game board and its elements.
+     */
 	public void drawBoard(Graphics graphics) {
 		
 		for(int i = 0;i<board.getPlayers().size();i++) {
@@ -259,13 +261,12 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 			obs.get(i).draw(graphics);
 		}
 	}
-	
-	/**
-	 *A running értéke alapján rajzolja ki a pályára a játékosokat, akadálsokat.
-	 *Amennyiben a játék véget ér, gameover metódus meghivásával kiirja a győztest.
-	 *
-	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játék összes elemét.
-	 */
+    /**
+     * Draws the game elements on the screen based on the running flag.
+     * If the game is over, calls the gameOver method to display the winner.
+     *
+     * @param graphics The graphics object on which to draw all game elements.
+     */
 	public void draw(Graphics graphics) {
 
 		if (running){
@@ -277,10 +278,10 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 	
-	/**
-	 * Hozzáadja az ételt a játéktáblához, egy új véletlenszerű pozícióra.
-	 *  Ügyelve arra, hogy az étel ne essen valemelyik akadályra.
-	 */
+	  /**
+     * Adds food to the game board at a new random position.
+     * Ensures that the food does not fall on any obstacle.
+     */
 	public void addFood() {
 		foodX = random.nextInt((int)(board.getWidth() / board.getUnitSize()))*board.getUnitSize();
 		foodY = random.nextInt((int)(board.getHeight() / board.getUnitSize()))* board.getUnitSize();
@@ -293,10 +294,10 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 			}
 	}
 	
-	/**
-	 * Hozzáad akadályokat a játéktáblához, ügyelve arra, hogy az akadályok 
-	 * ne essenek közvetlenül a kigyónak az aktuális poziciójára.
-	 */
+	 /**
+     * Adds an obstacle to the game board at a new random position.
+     * Ensures that the obstacle does not overlap with any other game element.
+     */
 	public void addHurdle() {
 		
 		List<Obstacle> obs = new ArrayList<>();
@@ -312,9 +313,9 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	}
 	
 	
-	/**
-	 * Ellenőrzi, hogy a kígyók összeütköztek-e önmagukkal vagy egymással.
-	 */
+	    /**
+     * Checks if the snakes have collided with themselves or each other.
+     */
 	public void checkSnakeRunsIntoSnake() {
 		
 		int playerHeadX;
@@ -372,7 +373,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	
 	/**
-	 * Ellenőrzi, hogy a kígyók nekifutottak-e a falnak.
+	 * Checks if snakes have collided with the walls of the game board.
 	 */
 	public void checkSnakeRunsIntoWall() {
 		int playerHeadX;
@@ -396,7 +397,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	}
 	
 	/**
-	 * Ellenőrzi, hogy a kígyók nekifutottak-e az akadálynak.
+	 * Checks if snakes have collided with obstacles on the game board.
 	 */
 	public void checkSnakeRunsIntoObstacle() {
 		int playerHeadX;
@@ -424,7 +425,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	}
 	
 	/**
-	 * Meghivja az ellenörző metódusokat, amik alapján dönt, hogy véget ér-e a játék.
+	 * Calls the methods responsible for checking if snakes have collided with walls, obstacles, or each other.
 	 * 
 	 * */
 	public void checkHit() {
@@ -436,10 +437,10 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 			}
 	}
 	/**
-	 * A játék végét jelzi és kiírja, hogy melyik játékos nyert a megadott grafikus felületre.
-	 *
-	 * @param graphics A grafikus objektum, amelyre rajzolni kell a játék végét.
-	 * @param winner   Az a kígyójátékos, aki nyert a játékban.
+	 *The game over method displays the winner of the game.
+	 * @param graphics The graphics object on which to draw the game over message.
+	 * @param winner The winning player (SnakePlayer object).
+	 * 
 	 */
 	public void gameOver(Graphics graphics,SnakePlayer winner) {
 		graphics.setColor(Color.red);
@@ -450,10 +451,11 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	}
 	
 	/**
-	 * A játék eseményeit kezeli a kígyók mozgásától kezdve az ütközés ellenőrzéséig.
-	 *Amennyiben a running értéke false, bezárja a játékot megjelenitő ablakot.
-	 * @param arg0 Az eseményobjektum, ami aktiválta ezt a metódust.
-	 */
+ * Handles game events from snake movements to collision checks.
+ * If the value of `running` is false, closes the window displaying the game.
+ *
+ * @param arg0 The event object that triggered this method.
+ */
 	@Override
 	public void actionPerformed(ActionEvent arg0) {
 		if (running) {	
@@ -468,16 +470,15 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 	}
 	
 	/**
-	 * Egy belső osztály, amelynek segitségével az irányításra vonatkozó  eseményeket kezeli.
-	 */
+     * Inner class extending the KeyAdapter class to handle keyboard events for controlling snake movements.
+     */
 	private class MyKeyAdapter extends KeyAdapter implements Serializable{
 		
 	/**
-	 * Visszaadja, hogy a beillentyűzet lenyomására, melyik irányba kell forduljon a kigyó.
-	 * 
-	 * @param e paraméterül kapott, lenyomott gomb 
-	 * 
-	 * */	
+ * Returns the direction in which the snake should turn upon pressing a keyboard key.
+ * 
+ * @param e The pressed key as a parameter.
+ */	
 	public void keyPressed(KeyEvent e) {
 			char dir;
 				for(int i = 0; i< board.getPlayers().size();i++) {
@@ -489,7 +490,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 		}
 	}
 	/**
-	 * Elmenti az aktuális játékot egy fájlba.
+	 * Saves the game to a file.
 	 */
 	public void saveToFile() {
 		try {
