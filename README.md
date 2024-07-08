@@ -4,36 +4,33 @@ Source code is in \NHF\src\NHF
 
 Unit test can be found in \NHF\test\junittest
 
-Snake Game for 2 Players
-Introduction and User Interface Description
-This document describes a classic game of Snake designed for 2 players. The game features obstacles that change positions randomly each time a fruit is collected.
+Program Description
+This program is a version of the classic Snake game but with two players and obstacles on the playing field. The obstacles change their positions randomly every time a fruit is collected.
 
 Gameplay
-1. Difficulty Levels
+Before starting the game, the user can select the difficulty level from the menu:
 
-The game allows the user to choose from the following difficulty levels:
+Easy: Up to 3 obstacles appear during the game.
+Medium: Up to 5 obstacles appear during the game.
+Hard: Up to 10 obstacles appear during the game.
+Reload: Loads the most recently saved game.
+During gameplay, the program keeps track of each player's score, incremented by 1 for each fruit collected.
 
-Easy: Up to 3 obstacles appear when fruits are collected.
-Medium: Up to 5 obstacles appear when fruits are collected.
-Hard: Up to 10 obstacles appear when fruits are collected.
-Reload: Option to load the last saved game.
-2. Scoring
+Controls
+Player 1: Uses arrow keys (Up, Down, Left, Right).
+Player 2: Uses keys (A, W, S, D).
+Game End Conditions
+Player collision: If one player collides with the other, the game ends. The player with the higher score wins.
 
-Players' scores increase by 1 with each fruit collected.
+Obstacle collision: If a player collides with an obstacle, that player loses, even if they have a higher score.
 
-3. Controls
+Fruit collection: When a player collects a fruit, their score increases by 1, and their snake's length increases. The number of obstacles on the field increases by 1, and their positions are randomized.
 
-Player 1: Up, Down, Right, Left keys.
-Player 2: A, W, S, D keys.
-4. Game End Scenarios
+Wall collision: If a player hits the wall, that player loses, even if they have a higher score.
 
-The game can end under the following conditions:
+Save and Reload
+Clicking the Save button saves the current game state. Clicking the Reload button loads the last saved game.
 
-Player Collision: Game ends if a player collides with the other player. The player with the higher score wins.
-Obstacle Collision: Game ends if a player collides with an obstacle, regardless of score.
-Fruit Collection: Player scores increase by 1 and snake length increases. Obstacles increase by 1, with positions randomly changing.
-Wall Collision: Game ends if a player collides with a wall, regardless of score.
-5. Save and Reload
-
-Save: Allows saving the current game state. A confirmation message "Press OK to return to the Menu" appears.
-Reload: Option to retrieve the last saved game state.
+After clicking Save, a small window appears with the message:
+"Press OK to return to the menu."
+Clicking OK closes the game window and returns to the menu.
