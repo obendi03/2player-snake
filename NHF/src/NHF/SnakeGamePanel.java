@@ -104,7 +104,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 			
 			Object[] options = {"OK"};
 	   	    int n = JOptionPane.showOptionDialog(this,
-	   	                   "Nyomjon az OK gombra a menübe való visszatéréshez! ","üzenet",
+	   	                   "Press OK to return to the menu.","message",
 	   	                   JOptionPane.PLAIN_MESSAGE,
 	   	                   JOptionPane.QUESTION_MESSAGE,
 	   	                   null,
@@ -500,7 +500,7 @@ public class SnakeGamePanel extends JPanel implements ActionListener,Serializabl
 			out.close();
 			}
 			catch(IOException ex) { 
-				System.out.println("Nem letezik az allomany, IO hiba keltkezett!");
+				System.out.println("IO exception occured while saving the game.");
 			}
 		}
 	}

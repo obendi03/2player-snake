@@ -168,7 +168,7 @@ public class MenuFrame extends JFrame implements ActionListener {
 		in.close();
 		} catch(IOException ex) {
 			System.out.println("tipus hiba");
-		} catch(ClassNotFoundException ex) { System.out.println("nincs ilyen fajl");}
+		} catch(ClassNotFoundException ex) { System.out.println("No such a file exists");}
 			
 		SnakeGameFrame sf2 = new SnakeGameFrame(panel);
 	}
