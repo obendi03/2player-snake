@@ -3,10 +3,11 @@
 > [!IMPORTANT]
 > You can start the game by executing the run.sh script.
 
+> [!NOTE]
+> Source code is in \NHF\src\NHF
 
-* Source code is in \NHF\src\NHF
-
-* Unit test can be found in \NHF\test\junittest
+> [!NOTE]
+> Unit test can be found in \NHF\test\junittest
 
 ## Program Description
 This program is a version of the classic Snake game but with two players and obstacles on the playing field. The obstacles change their positions randomly every time a fruit is collected.
